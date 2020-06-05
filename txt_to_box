@@ -1,0 +1,45 @@
+import os
+
+def get_bbox(txt_path,train_path):
+    list_txt = os.listdir(txt_path)
+    for i, txt_name in enumerate(list_txt):
+        img_name = str(os.path.splitext(txt_name)[0])+'.jpg'
+        print(img_name)
+        with open(txt_path + txt_name, 'r') as f:
+            for line in f.readlines():
+                line = line.strip('\n')
+                data = line.split(' ')
+                x = data[0].split(',')[:-1]
+                x = list(map(int, x))
+                x.sort()
+                x1 = x[0]
+                x2 = x[-1]
+
+                y = data[1].split(',')[:-1]
+                y = list(map(int, y))
+                y.sort()
+                y1 = y[0]
+                y2 = y[-1]
+
+                label = data[2]
+                if(label == 'box'):
+                    label = '0'
+                if (label == 'hole'):
+                    label = '1'
+                if (label == 'fold'):
+                    label = '2'
+                if (label == 'sink'):
+                    label = '3'
+
+                with open(train_path, 'a+') as txt:
+                    txt.write('VOCdevkit/VOC2007/JPEGImages/'+img_name+' '+str(x1)+','+str(y1)+','+str(x2)+','+str(y2)+','+label+'\n')
+
+
+
+                #print(txt_name+' '+str(x))
+
+
+if __name__ == "__main__":
+    txt_path = '../jsontxt/'
+    train_path = '../train.txt'
+    get_bbox(txt_path,train_path)
